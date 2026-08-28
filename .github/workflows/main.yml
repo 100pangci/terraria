@@ -31,13 +31,6 @@ jobs:
         username: ${{ secrets.DOCKERHUB_USERNAME }}
         password: ${{ secrets.DOCKERHUB_PASSWORD }}
 
-    - name: Login to ghcr.io
-      uses: docker/login-action@v4
-      with:
-        registry: ghcr.io
-        username: ${{ github.actor }}
-        password: ${{ secrets.GITHUB_TOKEN }}
-
     - name: Update Images
       run: ./bin/01-update-images ${{ secrets.GITHUB_TOKEN }}
 
@@ -66,20 +59,15 @@ jobs:
         # This is necessary in order to push a commit to the repo
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Leave this line unchanged
 
-    - name: Build and Push Images to ghcr.io
+    - name: Build and Push Images to Docker Hub
       run: ./bin/03-build-images push
       env:
-        CI_REGISTRY_IMAGE: ghcr.io/beardedio/terraria
-
-    - name: Build and Push Images to docker hub
-      run: ./bin/03-build-images push
-      env:
-        CI_REGISTRY_IMAGE: beardedio/terraria
+        CI_REGISTRY_IMAGE: ywpc05/terraria
 
     - name: Docker Hub Description
       uses: peter-evans/dockerhub-description@v5
       with:
-        username: ${{ secrets.DOCKER_HUB_USER }}
-        password: ${{ secrets.DOCKER_HUB_PASS }}
-        repository: beardedio/terraria
+        username: ${{ secrets.DOCKERHUB_USERNAME }}
+        password: ${{ secrets.DOCKERHUB_PASSWORD }}
+        repository: ywpc05/terraria
         short-description: "Docker images to run a Terraria Server. Images with TShock Server or Vanilla Server are available."
