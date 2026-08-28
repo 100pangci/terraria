@@ -21,6 +21,7 @@ RUN mkdir /tmp/terraria && \
     if [ ! -f /vanilla/TerrariaServer ]; then echo "Missing /vanilla/TerrariaServer"; exit 1; fi
 
 COPY run-vanilla.sh /vanilla/run.sh
+COPY entrypoint.sh /vanilla/entrypoint.sh
 
 # Metadata
 ARG VCS_REF
@@ -35,4 +36,4 @@ VOLUME ["/config"]
 
 # Run the server
 WORKDIR /vanilla
-ENTRYPOINT ["./run.sh"]
+ENTRYPOINT ["./entrypoint.sh"]
