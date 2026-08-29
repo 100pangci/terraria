@@ -1,6 +1,8 @@
 
 [![Auto Build](https://github.com/100pangci/terraria/actions/workflows/main.yml/badge.svg)](https://github.com/100pangci/terraria/actions/workflows/main.yml) ![Docker Image Size (tag)](https://img.shields.io/docker/image-size/ywpc05/terraria/latest) [![Docker Pulls](https://img.shields.io/docker/pulls/ywpc05/terraria.svg)]() [![Docker Stars](https://img.shields.io/docker/stars/ywpc05/terraria.svg)]()
 
+**简体中文**: [README_zh-CN.md](README_zh-CN.md)
+
 ### Usage
 ```
 docker create --rm -it \
@@ -62,6 +64,15 @@ If you get an error from docker saying the container name already exists, it mea
 If you want to reattach to any running containers:
 `sudo docker attach terraria`
 Now you can execute any commands to the terraria server. Ctrl-p Ctrl-q will detatch you from the process.
+
+### Interactive console (vanilla)
+The vanilla image forwards the container's stdin to the server console, so you can attach to a running container and type commands directly:
+```
+sudo docker attach terraria
+```
+Console commands like `save`, `say <message>`, `kick <player>` and `exit` are handled immediately. Detach with `Ctrl-p Ctrl-q` and the server keeps running.
+
+When the container is stopped (`docker stop` or `docker compose down`), the entrypoint sends `exit` to the server first so the world is saved before shutdown.
 
 ### Example Docker Compose file
 Here is an example docker-compose file that enables to the use of the vanilla server

@@ -25,7 +25,7 @@ latest_folder = "vanilla"
 short_description = "Docker images to run a Terraria Server. Images with TShock Server or Vanilla Server are available."
 
 # Full description used in the readme.md
-full_description = "Docker images to run a Terraria Server. Images with [TShock Server](https://github.com/Pryaxis/TShock) or [Vanilla Server](https://terraria.gamepedia.com/Server) are available."
+full_description = "Docker images to run a Terraria Server. Images with [TShock Server](https://github.com/Pryaxis/TShock) or [Vanilla Server](https://terraria.gamepedia.com/Server) are available. The vanilla image supports an interactive console via `docker attach` and graceful shutdown."
 
 
 
@@ -84,7 +84,7 @@ os.chdir(repodir)
 ## Build full description
 #####
 print('Building full description')
-with open('template/readme.template', 'r') as f:
+with open('template/readme.template', 'r', encoding='utf-8') as f:
     readme_contents = f.read()
 
 readme_contents = readme_contents.replace("%%TAGS%%", tags)
@@ -100,7 +100,27 @@ header = "# "+repo+"\n\n"
 header += full_description+"\n\n"
 readme = header+readme_contents
 
-with open('README.md','w') as f:
+with open('README.md','w', encoding='utf-8') as f:
     f.write(readme)
+
+#####
+## Update README_zh-CN.md
+#####
+print('Building zh-CN description')
+zh_description = "用于运行 Terraria 服务器的 Docker 镜像，提供 [TShock Server](https://github.com/Pryaxis/TShock) 与 [Vanilla Server](https://terraria.gamepedia.com/Server)。vanilla 镜像支持通过 `docker attach` 交互式控制台及优雅停服。"
+
+with open('template/readme.zh-CN.template', 'r', encoding='utf-8') as f:
+    zh_contents = f.read()
+
+zh_contents = zh_contents.replace("%%TAGS%%", tags)
+zh_contents = zh_contents.replace("%%YEAR%%", datetime.datetime.now().strftime("%Y"))
+
+print('Updating README_zh-CN.md')
+zh_header = "# "+repo+"（简体中文）\n\n"
+zh_header += zh_description+"\n\n"
+zh_readme = zh_header+zh_contents
+
+with open('README_zh-CN.md','w', encoding='utf-8') as f:
+    f.write(zh_readme)
 
 print('Done')

@@ -1,0 +1,119 @@
+[![Auto Build](https://github.com/100pangci/terraria/actions/workflows/main.yml/badge.svg)](https://github.com/100pangci/terraria/actions/workflows/main.yml) ![Docker Image Size (tag)](https://img.shields.io/docker/image-size/ywpc05/terraria/latest) [![Docker Pulls](https://img.shields.io/docker/pulls/ywpc05/terraria.svg)]() [![Docker Stars](https://img.shields.io/docker/stars/ywpc05/terraria.svg)]()
+
+[English README](README.md)
+
+### 用法
+```
+docker create --rm -it \
+  --name=terraria \
+  -v <path to data>:/config \
+  -e world=<world_file_name> \
+  -p 7777:7777 \
+  ywpc05/terraria:latest
+```
+
+镜像发布在 [Docker Hub](https://hub.docker.com/r/ywpc05/terraria)
+
+### 支持的标签及对应的 `Dockerfile` 链接
+%%TAGS%%
+
+### 快速参考
+- 获取帮助：\
+[TShock Discussions](https://github.com/Pryaxis/TShock/discussions) 或 [Terraria Forum](https://forums.terraria.org/index.php?forums/)
+
+- 提交问题：\
+https://github.com/100pangci/terraria/issues
+
+- 维护者：\
+[Henry Skrtich of Bearded.io](https://www.bearded.io/#footer)
+
+- 支持的 Docker 版本：\
+[我们支持最新版本](https://github.com/docker/docker-ce/releases/latest)（尽力支持 1.8 及以上）
+
+### 什么是 Terraria 服务器？
+Terraria 服务器为玩家通过互联网或其他网络连接、进行 [Terraria](https://terraria.org/) 多人游戏提供了一个平台。
+
+## 使用方法
+
+### 生成新世界
+要让服务器无需人工干预即可运行，需要预先配置一个已生成的世界。你可以使用自己已有的世界，也可以通过 Docker 生成一个，运行以下命令：
+```
+sudo docker run --rm -it -p 7777:7777 \
+    -v $HOME/terraria/config:/config \
+    --name=terraria \
+    ywpc05/terraria:latest
+```
+然后按照提示创建新世界。
+
+### 使用已有世界启动服务器
+世界文件需要存放在 config 目录中。
+使用已有世界启动服务器，运行以下命令：
+```
+sudo docker run --rm -dit \
+  --name=terraria \
+  -v $HOME/terraria/config:/config \
+  -e world=<world_file_name>.wld \
+  -p 7777:7777 \
+  ywpc05/terraria:latest
+```
+
+如果 Docker 提示容器名称已存在，说明需要先删除旧的容器进程。
+`sudo docker rm terraria`
+
+重新连接到正在运行的容器：
+`sudo docker attach terraria`
+之后即可向 Terraria 服务器发送任意指令。按 `Ctrl-p Ctrl-q` 断开连接。
+
+### 交互式控制台（vanilla）
+vanilla 镜像会将容器的 stdin 转发到服务器控制台，因此你可以附加到运行中的容器并直接输入指令：
+```
+sudo docker attach terraria
+```
+控制台指令如 `save`、`say <message>`、`kick <player>` 和 `exit` 都会立即生效。按 `Ctrl-p Ctrl-q` 断开，服务器继续运行。
+
+停止容器时（`docker stop` 或 `docker compose down`），入口脚本会先向服务器发送 `exit`，确保世界在关闭前完成保存。
+
+### Docker Compose 示例
+以下 docker-compose 文件示例可用于启动 vanilla 服务器：
+```
+version: '3'
+
+services:
+  terraria:
+    image: ywpc05/terraria:latest
+    ports:
+      - '7777:7777'
+    restart: unless-stopped
+    environment:
+      - world=<world_file_name>.wld
+    volumes:
+      - $HOME/terraria/config:/config
+    tty: true
+    stdin_open: true
+```
+
+### ywpc05/terraria:tshock-latest
+TShock 是 Terraria 的服务器增强插件，使用 C# 编写，基于 Terraria Server API。它通过 JSON 管理配置，并提供了原版服务器不具备的多种功能。
+
+### ywpc05/terraria:vanilla-latest
+Vanilla 是 Terraria 官方提供的服务器程序，功能基础但会随游戏本体保持更新。
+
+如果找不到最新版本的镜像，请[联系我们](https://www.bearded.io/#footer)以更新本仓库。
+
+### 常见问题
+- 我能否管理 tshock 自己的插件？\
+可以。如果要管理 tshock 容器的插件，请在 docker 命令中挂载 `-v <path to plugins folder>:/tshock/ServerPlugins`。如果要保留 tshock 自带的插件，需要把它们复制到 ServerPlugins 目录中，挂载会覆盖容器自带的插件。
+- 我启动了容器，但它一直让我选择世界，怎么解决？\
+你需要先用已有世界启动服务器（这样服务器会自动加载），或者用 `-it` 参数交互式运行容器来创建新世界。
+- 服务器加载世界时返回 "System.NullReferenceException" 异常。怎么办？\
+服务器需要 tty 连接。使用 `docker run` 启动时请加上 `-it` 参数；使用 docker-compose 时请添加 `tty: true`（参见此 [issue](https://github.com/100pangci/terraria/issues/7)）。
+
+#### 备注
+* 请参阅 [TShock 说明](https://tshock.readme.io/docs/getting-started) 了解如何正确配置 Terraria 服务器。
+* 其他[命令行参数](https://tshock.readme.io/docs/command-line-parameters)可以附加到上述任意启动方式末尾。Docker 会将主机上的 $HOME/terraria/world 目录映射到容器内的 /tshock/world 目录。
+* 运行服务器的更多信息请参考 [wiki](https://terraria.gamepedia.com/Server)。
+
+#### 许可证
+
+The MIT License (MIT)
+Copyright (c) %%YEAR%% Henry Skrtich
