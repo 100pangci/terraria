@@ -23,8 +23,18 @@ exec 3<&0 2>/dev/null || true
 # 将容器控制台输入（docker/podman attach）转发到管道
 cat <&3 > "$PIPE" &
 
-# 将管道作为 run.sh 的输入启动（cat 常驻读 FIFO，tail -f 在常驻写入者下会卡死）
-cat "$PIPE" | ./run.sh "$@" &
+# 将管道作为 run.sh 的输入启动。
+# 过滤 attach/SSH 建立时产生的首个空行（真实输入前不存在合法空行，
+# 之后创建世界时的空种子回车等空行不受影响）
+seen_input=false
+while IFS= read -r line; do
+    if [ -n "$line" ]; then
+        seen_input=true
+    elif ! $seen_input; then
+        continue
+    fi
+    printf '%s\n' "$line"
+done < "$PIPE" | ./run.sh "$@" &
 SERVER_PID=$!
 
 wait "$SERVER_PID"
