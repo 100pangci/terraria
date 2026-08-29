@@ -17,8 +17,11 @@ trap cleanup SIGTERM SIGINT
 
 cd /vanilla
 
-# 将容器控制台输入（docker attach）逐行转发到管道
-while IFS= read -r line; do printf '%s\n' "$line"; done > "$PIPE" &
+# 复制容器 stdin（PTY）到 fd 3，避免后台任务 stdin 被替换导致 attach 输入丢失
+exec 3<&0 2>/dev/null || true
+
+# 将容器控制台输入（docker/podman attach）转发到管道
+cat <&3 > "$PIPE" &
 
 # 将管道作为 run.sh 的输入启动
 tail -f "$PIPE" | ./run.sh "$@" &
