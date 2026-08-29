@@ -23,8 +23,8 @@ exec 3<&0 2>/dev/null || true
 # 将容器控制台输入（docker/podman attach）转发到管道
 cat <&3 > "$PIPE" &
 
-# 将管道作为 run.sh 的输入启动
-tail -f "$PIPE" | ./run.sh "$@" &
+# 将管道作为 run.sh 的输入启动（cat 常驻读 FIFO，tail -f 在常驻写入者下会卡死）
+cat "$PIPE" | ./run.sh "$@" &
 SERVER_PID=$!
 
 wait "$SERVER_PID"
