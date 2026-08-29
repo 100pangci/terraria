@@ -17,6 +17,9 @@ trap cleanup SIGTERM SIGINT
 
 cd /vanilla
 
+# 将容器控制台输入（docker attach）逐行转发到管道
+while IFS= read -r line; do printf '%s\n' "$line"; done > "$PIPE" &
+
 # 将管道作为 run.sh 的输入启动
 tail -f "$PIPE" | ./run.sh "$@" &
 SERVER_PID=$!
