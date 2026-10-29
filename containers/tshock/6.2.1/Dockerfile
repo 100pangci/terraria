@@ -12,7 +12,7 @@ ENV DOTNET_ROOT=/root/.dotnet
 RUN cd /tmp && \
     curl -L https://dot.net/v1/dotnet-install.sh -o dotnet-install.sh && \
     chmod +x ./dotnet-install.sh && \
-    ./dotnet-install.sh --channel 6.0 && \
+    ./dotnet-install.sh --channel 9.0 && \
     rm -R /tmp/*
 
 # Create symbolic link to ServerLog.txt
@@ -25,7 +25,7 @@ RUN mkdir /config /tshock && \
 RUN favorites_path="/root/My Games/Terraria" && mkdir -p "$favorites_path" && echo "{}" > "$favorites_path/favorites.json"
 
 RUN cd /tmp && \
-    curl -sL https://github.com/Pryaxis/TShock/releases/download/v5.2.2/TShock-5.2.2-for-Terraria-1.4.4.9-linux-amd64-Release.zip --output tshock_release.zip && \
+    curl -sL https://github.com/Pryaxis/TShock/releases/download/v6.2.1/TShock-6.2.1-for-Terraria-1.4.5.8-linux-x64-Release.zip --output tshock_release.zip && \
     unzip tshock_release.zip -d /tmp/tshock && \
     cd /tmp/tshock && \
     mkdir ./untar && tar -xf *.tar -C ./untar && \
@@ -40,8 +40,8 @@ ARG VCS_REF
 LABEL org.opencontainers.image.revision=$VCS_REF
 LABEL org.opencontainers.image.source="https://github.com/beardedio/terraria"
 LABEL org.opencontainers.image.licenses="MIT"
-LABEL org.opencontainers.image.description="Tshock Terraria Server - Version 5.2.2"
-LABEL TSHOCK_VERSION=5.2.2
+LABEL org.opencontainers.image.description="Tshock Terraria Server - Version 6.2.1"
+LABEL TSHOCK_VERSION=6.2.1
 
 # Allow for external data
 VOLUME ["/config", "/tshock/ServerPlugins"]
