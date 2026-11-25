@@ -12,14 +12,15 @@ docker create --rm -it \
   --name=terraria \
   -v <path to data>:/config \
   -e world=<world_file_name> \
-  -p 7777:7777 \
+  -p 7777:7777/tcp -p 7777:7777/udp \
   ywpc05/terraria:latest
 ```
 
 镜像发布在 [Docker Hub](https://hub.docker.com/r/ywpc05/terraria)
 
 ### 支持的标签及对应的 `Dockerfile` 链接
-* vanilla-1.4.5.8, vanilla-latest, latest [(containers/vanilla/1.4.5.8/Dockerfile)](https://github.com/100pangci/terraria/blob/main/containers/vanilla/1.4.5.8/Dockerfile)
+* vanilla-1.4.6.1, vanilla-latest, latest [(containers/vanilla/1.4.6.1/Dockerfile)](https://github.com/100pangci/terraria/blob/main/containers/vanilla/1.4.6.1/Dockerfile)
+* vanilla-1.4.5.8 [(containers/vanilla/1.4.5.8/Dockerfile)](https://github.com/100pangci/terraria/blob/main/containers/vanilla/1.4.5.8/Dockerfile)
 * vanilla-1.4.4.9 [(containers/vanilla/1.4.4.9/Dockerfile)](https://github.com/100pangci/terraria/blob/main/containers/vanilla/1.4.4.9/Dockerfile)
 * vanilla-1.4.3.6 [(containers/vanilla/1.4.3.6/Dockerfile)](https://github.com/100pangci/terraria/blob/main/containers/vanilla/1.4.3.6/Dockerfile)
 * vanilla-1.4.2.3 [(containers/vanilla/1.4.2.3/Dockerfile)](https://github.com/100pangci/terraria/blob/main/containers/vanilla/1.4.2.3/Dockerfile)
@@ -48,10 +49,12 @@ Terraria 服务器为玩家通过互联网或其他网络连接、进行 [Terrar
 
 ## 使用方法
 
+使用 Vanilla 1.4.6 或更新版本进行跨平台联机时，请同时映射服务器端口的 TCP 和 UDP。
+
 ### 生成新世界
 要让服务器无需人工干预即可运行，需要预先配置一个已生成的世界。你可以使用自己已有的世界，也可以通过 Docker 生成一个，运行以下命令：
 ```
-sudo docker run --rm -it -p 7777:7777 \
+sudo docker run --rm -it -p 7777:7777/tcp -p 7777:7777/udp \
     -v $HOME/terraria/config:/config \
     --name=terraria \
     ywpc05/terraria:latest
@@ -66,7 +69,7 @@ sudo docker run --rm -dit \
   --name=terraria \
   -v $HOME/terraria/config:/config \
   -e world=<world_file_name>.wld \
-  -p 7777:7777 \
+  -p 7777:7777/tcp -p 7777:7777/udp \
   ywpc05/terraria:latest
 ```
 
@@ -95,7 +98,8 @@ services:
   terraria:
     image: ywpc05/terraria:latest
     ports:
-      - '7777:7777'
+      - '7777:7777/tcp'
+      - '7777:7777/udp'
     restart: unless-stopped
     environment:
       - world=<world_file_name>.wld
