@@ -13,14 +13,15 @@ docker create --rm -it \
   --name=terraria \
   -v <path to data>:/config \
   -e world=<world_file_name> \
-  -p 7777:7777 \
+  -p 7777:7777/tcp -p 7777:7777/udp \
   ywpc05/terraria:latest
 ```
 
 Docker Images are avaiable on [Docker Hub](https://hub.docker.com/r/ywpc05/terraria)
 
 ### Supported tags and respective `Dockerfile` links
-* vanilla-1.4.5.8, vanilla-latest, latest [(containers/vanilla/1.4.5.8/Dockerfile)](https://github.com/100pangci/terraria/blob/main/containers/vanilla/1.4.5.8/Dockerfile)
+* vanilla-1.4.6.1, vanilla-latest, latest [(containers/vanilla/1.4.6.1/Dockerfile)](https://github.com/100pangci/terraria/blob/main/containers/vanilla/1.4.6.1/Dockerfile)
+* vanilla-1.4.5.8 [(containers/vanilla/1.4.5.8/Dockerfile)](https://github.com/100pangci/terraria/blob/main/containers/vanilla/1.4.5.8/Dockerfile)
 * vanilla-1.4.4.9 [(containers/vanilla/1.4.4.9/Dockerfile)](https://github.com/100pangci/terraria/blob/main/containers/vanilla/1.4.4.9/Dockerfile)
 * vanilla-1.4.3.6 [(containers/vanilla/1.4.3.6/Dockerfile)](https://github.com/100pangci/terraria/blob/main/containers/vanilla/1.4.3.6/Dockerfile)
 * vanilla-1.4.2.3 [(containers/vanilla/1.4.2.3/Dockerfile)](https://github.com/100pangci/terraria/blob/main/containers/vanilla/1.4.2.3/Dockerfile)
@@ -49,10 +50,12 @@ A Terraria server provides a platform for players to connect over the internet o
 
 ## How to use
 
+For crossplay on Vanilla 1.4.6 or later, publish the server port over both TCP and UDP.
+
 ### Generating a new world
 To run with out user intervention Terraria Server needs to be configure to use an already generated world. This means you can use one that you have already generated or you can generate one via docker by running this command:
 ```
-sudo docker run --rm -it -p 7777:7777 \
+sudo docker run --rm -it -p 7777:7777/tcp -p 7777:7777/udp \
     -v $HOME/terraria/config:/config \
     --name=terraria \
     ywpc05/terraria:latest
@@ -67,7 +70,7 @@ sudo docker run --rm -dit \
   --name=terraria \
   -v $HOME/terraria/config:/config \
   -e world=<world_file_name>.wld \
-  -p 7777:7777 \
+  -p 7777:7777/tcp -p 7777:7777/udp \
   ywpc05/terraria:latest
 ```
 
@@ -96,7 +99,8 @@ services:
   terraria:
     image: ywpc05/terraria:latest
     ports:
-      - '7777:7777'
+      - '7777:7777/tcp'
+      - '7777:7777/udp'
     restart: unless-stopped
     environment:
       - world=<world_file_name>.wld
